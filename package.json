@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env nodemon ./src/server"
+    "dev": "cross-env nodemon ./src/server",
+    "start": "node server.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
