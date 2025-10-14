@@ -1,0 +1,176 @@
+doctype html
+html(lang="" dir="ltr" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office")
+  head
+    meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes")
+    meta(name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no")
+    meta(name="x-apple-disable-message-reformatting")
+    
+    style(type="text/css").
+      @media all and (max-width:639px){
+        .wrapper{ width:100%!important; }
+        .container{ width:100%!important; min-width:100%!important; padding: 0 !important; }
+        .row{padding-left: 20px!important; padding-right: 20px!important;}
+        .col-mobile {width: 20px!important;}
+        .col{display: block!important; width: 100%!important;}
+        .mobile-center{text-align: center!important; float: none!important;}
+        .mobile-mx-auto {margin: 0 auto!important; float: none!important;}
+        .mobile-left{text-align: center!important; float: left!important;}
+        .img{ width:100% !important; height:auto !important; }
+        .ml-btn { width: 100% !important; max-width: 100%!important;}
+        .ml-btn-container { width: 100% !important; max-width: 100%!important;}
+      }
+      
+      html, body, .document { margin: 0 !important; padding: 0 !important; width: 100% !important; min-height: 100% !important; }
+      body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;}
+      img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+      table { border-collapse: collapse; }
+      table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+      body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+      h1, h2, h3, h4, h5, p { margin:0;}
+
+  body(style="margin: 0 !important; padding: 0 !important; background-color:#f6f6f6;")
+    .document(style="background-color:#f6f6f6; line-height: 100%; font-size:medium; font-size:max(16px, 1rem);")
+      
+      table(width="100%" align="center" cellspacing="0" cellpadding="0" border="0")
+        tr
+          td(align="center" valign="top")
+            table.wrapper(width="640" align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 640px;")
+              tr
+                td(align="center")
+                  
+                  // Logo Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#ffffff" align="center" border="0" cellspacing="0" cellpadding="0" style="width: 640px; min-width: 640px;")
+                          tr
+                            td(height="60" style="line-height: 60px; min-width: 640px;")
+                          tr
+                            td
+                              table(align="center" width="100%" border="0" cellspacing="0" cellpadding="0")
+                                tr
+                                  td.row(align="left" style="padding: 0 50px;")
+                                    img.logo(src=logoUrl border="0" alt="SaveOurVotes Logo" width="70" style="max-width: 70px; display: inline-block;")
+                          tr
+                            td(height="40" style="line-height: 40px;")
+                  
+                  // Welcome Back Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#ffffff" align="center" border="0" cellspacing="0" cellpadding="0" style="color: #000000; width: 640px; min-width: 640px;")
+                          tr
+                            td(height="20" style="line-height: 20px; min-width: 640px;")
+                          tr
+                            td.row(style="padding: 0 50px;")
+                              h1(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 24px; line-height: 165%; font-weight: bold; margin-bottom: 10px;")
+                                strong Welcome back, #{fullName}!
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 14px; line-height: 165%; margin-top: 0; margin-bottom: 0;")
+                                | We received a sign-in request for your SaveOurVotes account. To complete your sign-in, please verify your identity.
+                          tr
+                            td(height="10" style="line-height: 10px;")
+                  
+                  // Security Info Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#f8f9fa" align="center" border="0" cellspacing="0" cellpadding="0" style="color: #000000; width: 640px; min-width: 640px; border-left: 4px solid #4e48e0;")
+                          tr
+                            td(height="20" style="line-height: 20px; min-width: 640px;")
+                          tr
+                            td.row(style="padding: 0 50px;")
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #495057; font-size: 13px; line-height: 165%; margin-top: 0; margin-bottom: 5px;")
+                                strong Sign-in Details:
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #495057; font-size: 12px; line-height: 165%; margin-top: 0; margin-bottom: 2px;")
+                                | Time: #{signinTime}
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #495057; font-size: 12px; line-height: 165%; margin-top: 0; margin-bottom: 2px;")
+                                | Device: #{deviceInfo}
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #495057; font-size: 12px; line-height: 165%; margin-top: 0; margin-bottom: 0;")
+                                | Location: #{location}
+                          tr
+                            td(height="20" style="line-height: 20px;")
+                  
+                  // Verification Code Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#ffffff" align="center" border="0" cellspacing="0" cellpadding="0" style="color: #000000; width: 640px; min-width: 640px;")
+                          tr
+                            td(height="30" style="line-height: 30px; min-width: 640px;")
+                          tr
+                            td.row(style="padding: 0 50px;")
+                              h2(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 18px; line-height: 125%; font-weight: bold; margin-bottom: 10px;")
+                                strong Your Verification Code
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 14px; line-height: 165%; margin-top: 0; margin-bottom: 15px;")
+                                | Use this code to complete your sign-in. This code will expire in 10 minutes.
+                              
+                              // Verification Code Display
+                              table(width="100%" border="0" cellspacing="0" cellpadding="0")
+                                tr
+                                  td(align="center" style="padding: 20px 0;")
+                                    table(border="0" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; border: 2px solid #4e48e0; border-radius: 8px; padding: 20px;")
+                                      tr
+                                        td(align="center")
+                                          span(style="font-family: 'Courier New', monospace; font-size: 32px; font-weight: bold; color: #4e48e0; letter-spacing: 8px;") #{verificationCode}
+                          tr
+                            td(height="10" style="line-height: 10px;")
+                  
+                  // Alternative Button Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#ffffff" align="center" border="0" cellspacing="0" cellpadding="0" style="width: 640px; min-width: 640px;")
+                          tr
+                            td(height="20" style="line-height: 20px; min-width: 640px;")
+                          tr
+                            td.row(align="center" style="padding: 0 50px;")
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 14px; line-height: 165%; margin-top: 0; margin-bottom: 15px;")
+                                | Or click the button below to verify automatically:
+                              table.ml-btn-container(cellpadding="0" cellspacing="0" border="0" align="center" width="auto")
+                                tr
+                                  td(align="center" valign="middle")
+                                    table.ml-btn(border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: auto;")
+                                      tr
+                                        th(align="center" valign="middle" style="background-color: #4e48e0; border-radius: 3px; -webkit-font-smoothing: auto;")
+                                          a(href=verificationUrl target="_blank" style="display: block; padding: 15px 25px; font-family: Arial, Helvetica, sans-serif; color: #ffffff; font-size: 16px; text-decoration: none; border-radius: 3px; line-height: 18px; font-weight: normal;")
+                                            | Verify Sign-In
+                          tr
+                            td(height="30" style="line-height: 30px;")
+                  
+                  // Security Warning Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#fff3cd" align="center" border="0" cellspacing="0" cellpadding="0" style="color: #000000; width: 640px; min-width: 640px; border-left: 4px solid #ffc107;")
+                          tr
+                            td(height="20" style="line-height: 20px; min-width: 640px;")
+                          tr
+                            td.row(style="padding: 0 50px;")
+                              h3(style="font-family: Arial, Helvetica, sans-serif; color: #856404; font-size: 16px; line-height: 125%; font-weight: bold; margin-bottom: 10px;")
+                              |  ⚠️ Security Notice
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #856404; font-size: 13px; line-height: 165%; margin-top: 0; margin-bottom: 0;")
+                                | If you didn't try to sign in to your SaveOurVotes account, please ignore this email and consider changing your password to keep your account secure.
+                          tr
+                            td(height="20" style="line-height: 20px;")
+                  
+                  // Footer Section
+                  table.ml-default(width="100%" align="center" border="0" cellspacing="0" cellpadding="0")
+                    tr
+                      td
+                        table.container(width="640" bgcolor="#ffffff" align="center" border="0" cellspacing="0" cellpadding="0" style="color: #000000; width: 640px; min-width: 640px;")
+                          tr
+                            td(height="30" style="line-height: 30px; min-width: 640px;")
+                          tr
+                            td.row(style="padding: 0 50px;")
+                              h2(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 18px; line-height: 125%; font-weight: bold; margin-bottom: 10px;")
+                                strong Need help?
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 14px; line-height: 165%; margin-top: 0; margin-bottom: 0;")
+                                | If you have any questions or need assistance, please contact us at 
+                                a(href=`mailto:${supportEmail}` style="color: #4e48e0; text-decoration: none;") #{supportEmail}
+                                | .
+                              p(style="font-family: Arial, Helvetica, sans-serif; color: #666666; font-size: 12px; line-height: 165%; margin-top: 10px; margin-bottom: 0;")
+                                | This verification code will expire in 10 minutes for your security.
+                          tr
+                            td(height="50" style="line-height: 50px;")
