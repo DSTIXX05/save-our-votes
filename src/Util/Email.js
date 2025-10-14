@@ -34,12 +34,8 @@ export default class Email {
       if (!apiKey) throw new Error('SENDGRID_API_KEY not set');
       sgMail.setApiKey(apiKey);
 
-      const fromEmail = (
-        'dstixx05@gmail.com' ||
-        process.env.SENDGRID_FROM_EMAIL ||
-        process.env.EMAIL_USER ||
-        ''
-      ).trim();
+      const fromEmail = // 'dstixx05@gmail.com' ||
+      (process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER || '').trim();
       const fromName = (
         process.env.SENDGRID_FROM_NAME ||
         process.env.FROM_NAME ||
