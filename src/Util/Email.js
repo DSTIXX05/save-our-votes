@@ -30,7 +30,25 @@ export default class Email {
   // Send via SendGrid
   async sendViaSendGrid(template, subject) {
     try {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      const apiKey = (process.env.SENDGRID_API_KEY || '').trim();
+      if (!apiKey) throw new Error('SENDGRID_API_KEY not set');
+      sgMail.setApiKey(apiKey);
+
+      const fromEmail = (
+        'dstixx05@gmail.com' ||
+        process.env.SENDGRID_FROM_EMAIL ||
+        process.env.EMAIL_USER ||
+        ''
+      ).trim();
+      const fromName = (
+        process.env.SENDGRID_FROM_NAME ||
+        process.env.FROM_NAME ||
+        'SaveOurVotes'
+      ).trim();
+      if (!fromEmail)
+        throw new Error(
+          'SendGrid sender email not configured (SENDGRID_FROM_EMAIL or EMAIL_USER)'
+        );
 
       const templatePath = join(__dirname, '../Views', `${template}.pug`);
       const html = pug.renderFile(templatePath, {
@@ -44,7 +62,7 @@ export default class Email {
 
       const msg = {
         to: this.to,
-        from: this.from, // Must be verified in SendGrid
+        from: { email: fromEmail, name: fromName }, // required object form
         subject,
         html,
         text: convert(html, { wordwrap: 130 }),
@@ -53,8 +71,11 @@ export default class Email {
       await sgMail.send(msg);
       console.log(`Email sent via SendGrid to ${this.to}`);
     } catch (error) {
-      console.error('SendGrid error:', error.response?.body || error);
-      throw new Error('Failed to send email via SendGrid');
+      console.error(
+        'SendGrid error:',
+        error.response?.body || error.message || error
+      );
+      throw error;
     }
   }
 

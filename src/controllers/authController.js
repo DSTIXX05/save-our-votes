@@ -1,6 +1,7 @@
 import User from './../model/userModel.js';
 import jwt from 'jsonwebtoken';
 import Email from '../Util/Email.js';
+import { URL } from 'url';
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -11,24 +12,50 @@ const signToken = (id) => {
 const signUp = async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
-    const newUser = new User({ fullName, email, password, role });
+
+    // basic validation
+    if (!fullName || !email || !password) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'fullName, email and password are required',
+      });
+    }
+
+    const newUser = new User({
+      fullName,
+      email: email.toLowerCase().trim(),
+      password,
+      role,
+    });
     await newUser.save();
 
-    // Generate verification token
+    // generate verification token
     const verificationToken = jwt.sign(
       { id: newUser._id },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    const verificationUrl = `${process.env.FRONTEND_URL}/api/auth/verify-email?token=${verificationToken}`;
 
-    // Send welcome email with verification
-    await new Email(newUser, verificationUrl).sendWelcome();
+    // build verification URL safely
+    const base =
+      (process.env.BACKEND_URL || process.env.FRONTEND_URL || '').replace(
+        /\/+$/,
+        ''
+      ) || `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`;
+    const verificationUrl = new URL('/api/auth/verify-email', base);
+    verificationUrl.searchParams.set('token', verificationToken);
+
+    // send verification email but don't fail user creation if email fails
+    try {
+      await new Email(newUser, verificationUrl.toString()).sendWelcome();
+    } catch (emailErr) {
+      console.error('Verification email failed (non-fatal):', emailErr);
+    }
 
     res.status(201).json({
       status: 'success',
       message:
-        'User created successfully. Please check your email to verify your account.',
+        'User created successfully. Check your email to verify your account.',
       data: {
         user: {
           id: newUser._id,
@@ -40,25 +67,16 @@ const signUp = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
-
-    // Handle duplicate email error
+    console.error('SignUp error (full):', err);
     if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
       return res.status(400).json({
         status: 'fail',
         message: 'Email already exists. Please use a different email.',
       });
     }
-
-    // Handle validation errors
     if (err.name === 'ValidationError') {
-      return res.status(400).json({
-        status: 'fail',
-        message: err.message,
-      });
+      return res.status(400).json({ status: 'fail', message: err.message });
     }
-
-    // Handle other errors
     res.status(500).json({
       status: 'error',
       message: 'Something went wrong. Please try again.',
