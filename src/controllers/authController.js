@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import User from './../model/userModel.js';
 import jwt from 'jsonwebtoken';
 import Email from '../Util/Email.js';
@@ -208,4 +209,66 @@ const resendVerificationEmail = async (req, res) => {
   }
 };
 
-export { signUp, verifyEmail, resendVerificationEmail };
+// Login handler
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Email and password are required',
+      });
+    }
+
+    // ensure we get the hashed password field
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+    }).select('+password +isVerified');
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ status: 'fail', message: 'Invalid credentials' });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      return res
+        .status(401)
+        .json({ status: 'fail', message: 'Invalid credentials' });
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        status: 'fail',
+        message:
+          'Email not verified. Please verify your email before logging in.',
+      });
+    }
+
+    const token = signToken(user._id);
+
+    res.status(200).json({
+      status: 'success',
+      token,
+      data: {
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified,
+        },
+      },
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Something went wrong. Please try again.',
+    });
+  }
+};
+
+export { signUp, verifyEmail, resendVerificationEmail, login };
