@@ -3,11 +3,36 @@ import User from './../model/userModel.js';
 import jwt from 'jsonwebtoken';
 import Email from '../Util/Email.js';
 import { URL } from 'url';
+import AppError from './../Util/AppError.js';
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
+
+  const createSendToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
+
+    const cookieOptions = {
+      sameSite: 'None', // Allows cross-site requests
+      maxAge:
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000, // 1 day
+      httpOnly: true, // Ensures the cookie is not accessible via JavaScript
+      secure: true, // Ensures the cookie is only sent over HTTPS
+    };
+
+    res.cookie('jwt', token, cookieOptions);
+
+    user.password = undefined;
+
+    res.status(statusCode).json({
+      status: 'success',
+      token,
+      data: {
+        user: user,
+      },
+    });
+  };
 };
 
 const signUp = async (req, res) => {
@@ -210,15 +235,12 @@ const resendVerificationEmail = async (req, res) => {
 };
 
 // Login handler
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body || {};
 
     if (!email || !password) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Email and password are required',
-      });
+      return next(new AppError('Please provide email and password', 400));
     }
 
     // ensure we get the hashed password field
@@ -226,25 +248,12 @@ const login = async (req, res) => {
       email: email.toLowerCase().trim(),
     }).select('+password +isVerified');
 
-    if (!user) {
-      return res
-        .status(401)
-        .json({ status: 'fail', message: 'Invalid credentials' });
-    }
-
-    const passwordMatches = await bcrypt.compare(password, user.password);
-    if (!passwordMatches) {
-      return res
-        .status(401)
-        .json({ status: 'fail', message: 'Invalid credentials' });
+    if (!email || !password) {
+      return next(new AppError('Please provide email and password', 400));
     }
 
     if (!user.isVerified) {
-      return res.status(403).json({
-        status: 'fail',
-        message:
-          'Email not verified. Please verify your email before logging in.',
-      });
+      return next(new AppError('User not verified', 403));
     }
 
     const token = signToken(user._id);
