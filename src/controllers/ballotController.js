@@ -1,6 +1,10 @@
-// Create or add ballot to election
-export const addBallot = async (req, res, next) => {
-  try {
+import Election from '../model/electionModel.js';
+import AppError from '../Util/AppError.js';
+import catchAsync from '../Util/catchAsync.js';
+
+// Factory: add ballot to election
+const addBallotFactory = (BallotSchema = null) =>
+  catchAsync(async (req, res, next) => {
     const { electionId } = req.params;
     const { title, description, type, maxSelections, options } = req.body || {};
 
@@ -27,20 +31,15 @@ export const addBallot = async (req, res, next) => {
     election.ballots.push(newBallot);
     await election.save();
 
-    res
-      .status(201)
-      .json({
-        status: 'success',
-        data: { ballot: election.ballots[election.ballots.length - 1] },
-      });
-  } catch (err) {
-    next(err);
-  }
-};
+    res.status(201).json({
+      status: 'success',
+      data: { ballot: election.ballots[election.ballots.length - 1] },
+    });
+  });
 
-// Get all ballots (via election)
-export const listBallots = async (req, res, next) => {
-  try {
+// Factory: list ballots for election
+const listBallotsFactory = () =>
+  catchAsync(async (req, res, next) => {
     const { electionId } = req.params;
     const election = await Election.findById(electionId)
       .select('ballots')
@@ -52,14 +51,11 @@ export const listBallots = async (req, res, next) => {
       results: election.ballots.length,
       data: { ballots: election.ballots },
     });
-  } catch (err) {
-    next(err);
-  }
-};
+  });
 
-// Get single ballot by ID within election
-export const getBallot = async (req, res, next) => {
-  try {
+// Factory: get single ballot
+const getBallotFactory = () =>
+  catchAsync(async (req, res, next) => {
     const { electionId, ballotId } = req.params;
     const election = await Election.findById(electionId).lean();
     if (!election) return next(new AppError('Election not found', 404));
@@ -68,14 +64,11 @@ export const getBallot = async (req, res, next) => {
     if (!ballot) return next(new AppError('Ballot not found', 404));
 
     res.json({ status: 'success', data: { ballot } });
-  } catch (err) {
-    next(err);
-  }
-};
+  });
 
-// Update ballot
-export const updateBallot = async (req, res, next) => {
-  try {
+// Factory: update ballot
+const updateBallotFactory = () =>
+  catchAsync(async (req, res, next) => {
     const { electionId, ballotId } = req.params;
     const { title, description, isActive } = req.body || {};
 
@@ -91,14 +84,11 @@ export const updateBallot = async (req, res, next) => {
 
     await election.save();
     res.json({ status: 'success', data: { ballot } });
-  } catch (err) {
-    next(err);
-  }
-};
+  });
 
-// Delete ballot
-export const deleteBallot = async (req, res, next) => {
-  try {
+// Factory: delete ballot
+const deleteBallotFactory = () =>
+  catchAsync(async (req, res, next) => {
     const { electionId, ballotId } = req.params;
     const election = await Election.findById(electionId);
     if (!election) return next(new AppError('Election not found', 404));
@@ -107,7 +97,11 @@ export const deleteBallot = async (req, res, next) => {
     await election.save();
 
     res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
-};
+  });
+
+// Exports using factories
+export const addBallot = addBallotFactory();
+export const listBallots = listBallotsFactory();
+export const getBallot = getBallotFactory();
+export const updateBallot = updateBallotFactory();
+export const deleteBallot = deleteBallotFactory();

@@ -1,15 +1,15 @@
 import crypto from 'crypto';
 import VoterToken from '../model/voterTokenModel.js';
 import Election from '../model/electionModel.js';
-import Email from '../Util/Email.js';
 import AppError from '../Util/AppError.js';
+import catchAsync from '../Util/catchAsync.js';
 
-function hashToken(raw) {
-  return crypto.createHash('sha256').update(String(raw)).digest('hex');
-}
+const hashToken = (raw) =>
+  crypto.createHash('sha256').update(String(raw)).digest('hex');
 
-export const generateTokens = async (req, res, next) => {
-  try {
+// Factory: generate voter tokens
+const generateTokensFactory = () =>
+  catchAsync(async (req, res, next) => {
     const { electionId } = req.params;
     const { emails = [], expiryHours = 24 } = req.body || {};
 
@@ -33,16 +33,9 @@ export const generateTokens = async (req, res, next) => {
       tokens.push({ email, token: raw });
     }
 
-    // Optionally send emails here (async)
-    // for (const t of tokens) {
-    //   const voteUrl = `${process.env.FRONTEND_URL}/vote?token=${t.token}&electionId=${electionId}`;
-    //   await new Email({ email: t.email }, voteUrl).sendInvite();
-    // }
-
     res
       .status(201)
       .json({ status: 'success', count: tokens.length, data: { tokens } });
-  } catch (err) {
-    next(err);
-  }
-};
+  });
+
+export const generateTokens = generateTokensFactory();
