@@ -9,15 +9,24 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy for Heroku
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.ENV === 'development') {
+// Logging based on environment
+if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
+} else {
+  // Production: use 'combined' format with less verbosity
+  app.use(morgan('combined'));
 }
 
-// Serve Swagger UI at /api-docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Serve Swagger UI - only in development
+if (process.env.NODE_ENV === 'development') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 import authRoutes from './Routes/authRoute.js';
 
