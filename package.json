@@ -8,7 +8,7 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && cp -r src/Views dist/Views",
+    "build": "tsc && cpy src/Views dist/Views --parents",
     "dev": "cross-env NODE_ENV=development nodemon --exec \"node --loader ts-node/esm\" ./src/server.ts",
     "start": "node ./dist/server.js",
     "start:prod": "cross-env NODE_ENV=production node ./dist/server.js"
@@ -39,6 +39,7 @@
     "@types/swagger-ui-express": "^4.1.6",
     "@types/swagger-jsdoc": "^6.0.4",
     "cross-env": "^10.0.0",
+    "cpy-cli": "^5.0.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
