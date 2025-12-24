@@ -8,7 +8,7 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && cp -r src/Views dist/Views",
     "dev": "cross-env NODE_ENV=development nodemon --exec \"node --loader ts-node/esm\" ./src/server.ts",
     "start": "node ./dist/server.js",
     "start:prod": "cross-env NODE_ENV=production node ./dist/server.js"
