@@ -1,12 +1,13 @@
+import { Request, Response, NextFunction } from 'express';
 import AppError from '../Util/AppError.js';
 import catchAsync from '../Util/catchAsync.js';
 import { validateToken, castVote } from '../services/voteService.js';
 import { TallyRegistry } from '../domain/voting/tally.js';
-import Election from '../model/electionModel.js';
+import Election, { IElection } from '../model/electionModel.js';
 
 // Factory: validate voter token
 const validateVoterTokenFactory = () =>
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { token, electionId } = req.body || {};
     if (!token || !electionId)
       return next(new AppError('token and electionId required', 400));
@@ -20,7 +21,7 @@ const validateVoterTokenFactory = () =>
 
 // Factory: cast vote
 const castFactory = () =>
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { token, electionId, ballotId, optionIds } = req.body || {};
     if (!token || !electionId || !ballotId || !optionIds) {
       return next(
@@ -28,7 +29,7 @@ const castFactory = () =>
       );
     }
 
-    const meta = { ip: req.ip, userAgent: req.headers['user-agent'] };
+    const meta = { ip: req.ip, userAgent: req.headers['user-agent'] as string };
     await castVote({ token, electionId, ballotId, optionIds, meta });
 
     res.json({ status: 'success', message: 'Vote recorded' });
@@ -36,7 +37,7 @@ const castFactory = () =>
 
 // Factory: get results for ballot
 const resultsForBallotFactory = () =>
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { electionId, ballotId } = req.params;
 
     const election = await Election.findById(electionId).lean();

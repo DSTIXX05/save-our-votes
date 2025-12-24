@@ -1,4 +1,5 @@
-import Election from '../model/electionModel.js';
+import { Request, Response, NextFunction } from 'express';
+import Election, { IElection } from '../model/electionModel.js';
 import AppError from '../Util/AppError.js';
 import {
   getAll as listFactory,
@@ -6,11 +7,23 @@ import {
   deleteOne as deleteFactory,
 } from './handlerFactory.js';
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 // Create a new election (expects req.user to be set to the authenticated organizer)
-export const createElection = async (req, res, next) => {
+export const createElection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { title, description, startAt, endAt, organizerId } = req.body;
-    console.log('createElection req.body =', req.body); // debug
+    console.log('createElection req.body =', req.body);
     if (!title || !startAt || !endAt) {
       return next(new AppError('title, startAt and endAt are required', 400));
     }
@@ -54,8 +67,12 @@ export const createElection = async (req, res, next) => {
   }
 };
 
-// (optional) simple get by id
-export const getElection = async (req, res, next) => {
+// Get election by ID
+export const getElection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const election = await Election.findById(req.params.id).populate(
       'organizer',
@@ -68,7 +85,12 @@ export const getElection = async (req, res, next) => {
   }
 };
 
-export const getElectionBySlug = async (req, res, next) => {
+// Get election by slug
+export const getElectionBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const election = await Election.findOne({ slug: req.params.slug }).populate(
       'organizer',
@@ -84,5 +106,3 @@ export const getElectionBySlug = async (req, res, next) => {
 export const listElections = listFactory(Election);
 export const updateElection = updateFactory(Election);
 export const deleteElection = deleteFactory(Election);
-
-// export { createElection, getElection, getElectionBySlug };

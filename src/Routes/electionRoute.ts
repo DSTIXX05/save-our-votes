@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 import {
   createElection,
   getElection,
@@ -10,7 +10,7 @@ import {
 import ballotRouter from './ballotRoute.js';
 import tokenRouter from './tokenRoute.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Nested routes for ballots and tokens under elections
 router.use('/:electionId/ballots', ballotRouter);

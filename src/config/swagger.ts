@@ -1,7 +1,7 @@
-import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerJsdoc, { Options } from 'swagger-jsdoc';
 
 // Swagger definition - this is the metadata about your API
-const options = {
+const options: Options = {
   definition: {
     openapi: '3.0.0', // OpenAPI version
     info: {
@@ -28,7 +28,7 @@ const options = {
     },
   },
   // Paths to files where Swagger comments are written
-  apis: ['./src/Routes/*.js'],
+  apis: ['./src/Routes/*.ts'],
 };
 
 // Generate Swagger docs based on the options and JSDoc comments in your routes

@@ -1,15 +1,16 @@
+import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import VoterToken from '../model/voterTokenModel.js';
 import Election from '../model/electionModel.js';
 import AppError from '../Util/AppError.js';
 import catchAsync from '../Util/catchAsync.js';
 
-const hashToken = (raw) =>
+const hashToken = (raw: string): string =>
   crypto.createHash('sha256').update(String(raw)).digest('hex');
 
 // Factory: generate voter tokens
 const generateTokensFactory = () =>
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { electionId } = req.params;
     const { emails = [], expiryHours = 24 } = req.body || {};
 
@@ -18,7 +19,7 @@ const generateTokensFactory = () =>
     const election = await Election.findById(electionId);
     if (!election) return next(new AppError('Election not found', 404));
 
-    const tokens = [];
+    const tokens: Array<{ email: string; token: string }> = [];
     const expiresAt = new Date(Date.now() + expiryHours * 60 * 60 * 1000);
 
     for (const email of emails) {

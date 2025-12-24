@@ -1,11 +1,12 @@
-export class BallotRule {
-  validate(selection, ballot) {
-    throw new Error('validate() not implemented');
-  }
+import { IBallot } from '../../model/ballotModel.js';
+import { Types } from 'mongoose';
+
+export abstract class BallotRule {
+  abstract validate(selection: any, ballot: IBallot): Types.ObjectId[];
 }
 
 export class SingleChoiceRule extends BallotRule {
-  validate(selection, ballot) {
+  validate(selection: any, ballot: IBallot): Types.ObjectId[] {
     const ids = Array.isArray(selection) ? selection : [selection];
     if (ids.length !== 1) throw new Error('Select exactly one option');
     const allowed = new Set(ballot.options.map((o) => String(o._id)));
@@ -16,7 +17,7 @@ export class SingleChoiceRule extends BallotRule {
 }
 
 export class MultipleChoiceRule extends BallotRule {
-  validate(selection, ballot) {
+  validate(selection: any, ballot: IBallot): Types.ObjectId[] {
     const ids = Array.isArray(selection) ? selection : [selection];
     if (ids.length < 1) throw new Error('Select at least one option');
     const max = ballot.maxSelections || 1;
@@ -25,11 +26,11 @@ export class MultipleChoiceRule extends BallotRule {
     for (const id of ids) {
       if (!allowed.has(String(id))) throw new Error('Invalid option selected');
     }
-    return Array.from(new Set(ids)); // dedupe
+    return Array.from(new Set(ids));
   }
 }
 
-export const RuleRegistry = {
+export const RuleRegistry: Record<string, BallotRule> = {
   single: new SingleChoiceRule(),
   multiple: new MultipleChoiceRule(),
 };

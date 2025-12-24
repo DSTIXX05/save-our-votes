@@ -1,9 +1,19 @@
+import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../Util/catchAsync.js';
 import AppError from '../Util/AppError.js';
-// import APIFeatures from '../utils/apiFeatures.js'; // enable if present
+import { Model, Document } from 'mongoose';
 
-export const deleteOne = (Model) =>
-  catchAsync(async (req, res, next) => {
+interface PopOptions {
+  path: string;
+  select?: string;
+}
+
+interface HandlerOptions {
+  runValidators?: boolean;
+}
+
+export const deleteOne = (Model: Model<any>) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
@@ -17,8 +27,8 @@ export const deleteOne = (Model) =>
     });
   });
 
-export const updateOne = (Model, opts = {}) =>
-  catchAsync(async (req, res, next) => {
+export const updateOne = (Model: Model<any>, opts: HandlerOptions = {}) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: opts.runValidators ?? true,
@@ -34,8 +44,8 @@ export const updateOne = (Model, opts = {}) =>
     });
   });
 
-export const createOne = (Model) =>
-  catchAsync(async (req, res, next) => {
+export const createOne = (Model: Model<any>) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.create(req.body);
     res.status(201).json({
       status: 'success',
@@ -43,8 +53,8 @@ export const createOne = (Model) =>
     });
   });
 
-export const getOne = (Model, popOptions) =>
-  catchAsync(async (req, res, next) => {
+export const getOne = (Model: Model<any>, popOptions?: PopOptions) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let query = Model.findById(req.params.id);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
@@ -59,15 +69,12 @@ export const getOne = (Model, popOptions) =>
     });
   });
 
-export const getAll = (Model) =>
-  catchAsync(async (req, res, next) => {
+export const getAll = (Model: Model<any>) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // Optional nested filter support
-    let filter = {};
-    if (req.params?.parentId) filter = { parent: req.params.parentId };
-
-    // If you have APIFeatures, enable the lines below, otherwise do a simple find.
-    // const features = new APIFeatures(Model.find(filter), req.query).filter().sort().limitFields().paginate();
-    // const docs = await features.query;
+    let filter: Record<string, any> = {};
+    if ((req.params as any).parentId)
+      filter = { parent: (req.params as any).parentId };
 
     const docs = await Model.find(filter).lean();
 

@@ -1,7 +1,21 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  fullName: string;
+  email: string;
+  password: string;
+  role: 'admin' | 'user';
+  isVerified: boolean;
+  passwordChangedAt?: Date;
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+}
+
+const userSchema = new Schema<IUser>(
   {
     fullName: {
       type: String,
@@ -11,7 +25,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      // unique: true,
       lowercase: true,
       trim: true,
     },
@@ -19,7 +32,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 8,
-      select: false, // do not return password by default
+      select: false,
     },
     role: {
       type: String,
@@ -42,30 +55,31 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   if (!this.isNew) {
-    this.passwordChangedAt = Date.now() - 1000; // ensure token issued before this time is invalidated
+    this.passwordChangedAt = new Date(Date.now() - 1000);
   }
   next();
 });
 
 // Instance method to verify password
 userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
+  candidatePassword: string,
+  userPassword: string
+): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 // Optional helper to check if password changed after token issued
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (
+  JWTTimestamp: number
+): boolean {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
+    const changedTimestamp = Math.floor(
+      this.passwordChangedAt.getTime() / 1000
     );
     return JWTTimestamp < changedTimestamp;
   }
   return false;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<IUser>('User', userSchema);
 export default User;

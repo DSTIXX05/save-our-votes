@@ -1,6 +1,8 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer';
 import sgMail from '@sendgrid/mail';
+// @ts-ignore
 import pug from 'pug';
+// @ts-ignore
 import { convert } from 'html-to-text';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -8,16 +10,26 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+interface IUser {
+  email: string;
+  fullName: string;
+}
+
 export default class Email {
-  constructor(user, url) {
+  private to: string;
+  private firstName: string;
+  private url: string;
+  private from: string;
+
+  constructor(user: IUser, url: string) {
     this.to = user.email;
     this.firstName = user.fullName.split(' ')[0];
     this.url = url;
-    this.from = process.env.EMAIL_USER; // Your verified email
+    this.from = process.env.EMAIL_USER || '';
   }
 
   // Gmail transport (fallback)
-  newTransport() {
+  private newTransport(): Transporter {
     return nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -28,14 +40,17 @@ export default class Email {
   }
 
   // Send via SendGrid
-  async sendViaSendGrid(template, subject) {
+  async sendViaSendGrid(template: string, subject: string): Promise<void> {
     try {
       const apiKey = (process.env.SENDGRID_API_KEY || '').trim();
       if (!apiKey) throw new Error('SENDGRID_API_KEY not set');
       sgMail.setApiKey(apiKey);
 
-      const fromEmail = // 'dstixx05@gmail.com' ||
-      (process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER || '').trim();
+      const fromEmail = (
+        process.env.SENDGRID_FROM_EMAIL ||
+        process.env.EMAIL_USER ||
+        ''
+      ).trim();
       const fromName = (
         process.env.SENDGRID_FROM_NAME ||
         process.env.FROM_NAME ||
@@ -58,7 +73,7 @@ export default class Email {
 
       const msg = {
         to: this.to,
-        from: { email: fromEmail, name: fromName }, // required object form
+        from: { email: fromEmail, name: fromName },
         subject,
         html,
         text: convert(html, { wordwrap: 130 }),
@@ -67,16 +82,17 @@ export default class Email {
       await sgMail.send(msg);
       console.log(`Email sent via SendGrid to ${this.to}`);
     } catch (error) {
+      const err = error as any;
       console.error(
         'SendGrid error:',
-        error.response?.body || error.message || error
+        err.response?.body || err.message || error
       );
       throw error;
     }
   }
 
   // Send via Gmail (fallback)
-  async sendViaGmail(template, subject) {
+  async sendViaGmail(template: string, subject: string): Promise<void> {
     try {
       const templatePath = join(__dirname, '../Views', `${template}.pug`);
       const html = pug.renderFile(templatePath, {
@@ -105,7 +121,7 @@ export default class Email {
   }
 
   // Smart send - tries SendGrid first, falls back to Gmail
-  async send(template, subject) {
+  async send(template: string, subject: string): Promise<void> {
     try {
       if (process.env.SENDGRID_API_KEY) {
         await this.sendViaSendGrid(template, subject);
@@ -118,7 +134,7 @@ export default class Email {
     }
   }
 
-  async sendWelcome() {
+  async sendWelcome(): Promise<void> {
     await this.send(
       'verificationEmail',
       'Welcome to SaveOurVotes - Verify Your Email'

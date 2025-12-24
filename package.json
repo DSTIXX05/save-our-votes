@@ -5,11 +5,13 @@
   "license": "ISC",
   "author": "delightsome",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env ENV=development nodemon ./src/server",
-    "start": "node ./src/server.js"
+    "build": "tsc",
+    "dev": "cross-env NODE_ENV=development nodemon --exec \"node --loader ts-node/esm\" ./src/server.ts",
+    "start": "node ./dist/server.js",
+    "start:prod": "cross-env NODE_ENV=production node ./dist/server.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
@@ -22,13 +24,23 @@
     "mongoose": "^8.19.1",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.9",
-    "nodemon": "^3.1.10",
     "pug": "^3.0.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "url": "^0.11.4"
   },
   "devDependencies": {
-    "cross-env": "^10.1.0"
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.11.0",
+    "@types/nodemailer": "^6.4.14",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "cross-env": "^10.0.0",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

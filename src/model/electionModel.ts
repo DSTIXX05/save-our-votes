@@ -1,17 +1,46 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
-const optionSchema = new mongoose.Schema(
+export interface IOption {
+  _id?: Types.ObjectId;
+  text: string;
+  order: number;
+}
+
+export interface IBallot {
+  _id?: Types.ObjectId;
+  title: string;
+  description?: string;
+  type: 'single' | 'multiple';
+  maxSelections: number;
+  options: IOption[];
+  isActive: boolean;
+}
+
+export interface IElection extends Document {
+  title: string;
+  slug: string;
+  description?: string;
+  organizer: Types.ObjectId;
+  startAt: Date;
+  endAt: Date;
+  status: 'draft' | 'scheduled' | 'open' | 'closed';
+  ballots: IBallot[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const optionSchema = new Schema<IOption>(
   {
-    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+    _id: { type: Schema.Types.ObjectId, auto: true },
     text: { type: String, required: true, trim: true },
     order: { type: Number, default: 0 },
   },
   { _id: true }
 );
 
-const ballotSchema = new mongoose.Schema(
+const ballotSchema = new Schema<IBallot>(
   {
-    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+    _id: { type: Schema.Types.ObjectId, auto: true },
     title: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
     type: {
@@ -23,20 +52,20 @@ const ballotSchema = new mongoose.Schema(
     maxSelections: { type: Number, default: 1 },
     options: {
       type: [optionSchema],
-      validate: (v) => Array.isArray(v) && v.length > 1,
+      validate: (v: IOption[]) => Array.isArray(v) && v.length > 1,
     },
     isActive: { type: Boolean, default: true },
   },
   { _id: true }
 );
 
-const electionSchema = new mongoose.Schema(
+const electionSchema = new Schema<IElection>(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, unique: true, lowercase: true, index: true },
     description: { type: String, trim: true },
     organizer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
@@ -57,7 +86,7 @@ electionSchema.pre('validate', async function (next) {
   if (!this.title) return next();
   if (!this.isModified('title') && this.slug) return next();
 
-  const slugify = (text) =>
+  const slugify = (text: string): string =>
     String(text)
       .toLowerCase()
       .normalize('NFKD')
@@ -70,7 +99,6 @@ electionSchema.pre('validate', async function (next) {
   let slug = base;
   let i = 0;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const existing = await mongoose.models.Election.findOne({
       slug,
@@ -85,4 +113,4 @@ electionSchema.pre('validate', async function (next) {
   next();
 });
 
-export default mongoose.model('Election', electionSchema);
+export default mongoose.model<IElection>('Election', electionSchema);
