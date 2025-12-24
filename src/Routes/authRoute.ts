@@ -6,6 +6,8 @@ import {
   verifyEmail,
   resendVerificationEmail,
   login,
+  forgotPassword,
+  resetPassword,
 } from '../controllers/authController.js';
 
 /**
@@ -120,5 +122,63 @@ router.post('/resend-verification', resendVerificationEmail);
  *         description: Invalid credentials
  */
 router.post('/login', login);
+
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Reset email sent (if user exists)
+ */
+router.post('/forgot-password', forgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   patch:
+ *     summary: Reset password with token
+ *     tags:
+ *       - Authentication
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *               passwordConfirm:
+ *                 type: string
+ *             required:
+ *               - password
+ *               - passwordConfirm
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.patch('/reset-password', resetPassword);
 
 export default router;

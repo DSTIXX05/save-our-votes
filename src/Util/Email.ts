@@ -140,4 +140,8 @@ export default class Email {
       'Welcome to SaveOurVotes - Verify Your Email'
     );
   }
+
+  async sendPasswordReset(): Promise<void> {
+    await this.send('passwordResetEmail', 'SaveOurVotes - Reset Your Password');
+  }
 }

@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import Email from '../Util/Email.js';
 import { URL } from 'url';
 import AppError from '../Util/AppError.js';
+import app from '../app.js';
 
 interface JWTPayload {
   id: string;
@@ -270,5 +271,143 @@ export const login = async (
     createSendToken(user, 200, res);
   } catch (err) {
     next(err);
+  }
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(new AppError('Please provide your email', 400));
+    }
+
+    const user = await User.findOne({ email });
+
+    // Security: Don't reveal if email exists - return same response regardless
+    if (!user) {
+      res.json({
+        status: 'success',
+        message:
+          'If that email exists in our system, you will receive a password reset link.',
+      });
+      return;
+    }
+
+    // Generate reset token
+    const forgotToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '10m' }
+    );
+
+    // Build reset URL
+    const base =
+      (process.env.BACKEND_URL || process.env.FRONTEND_URL || '').replace(
+        /\/+$/,
+        ''
+      ) || `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`;
+    const resetUrl = new URL('/api/auth/reset-password', base);
+    resetUrl.searchParams.set('token', forgotToken);
+
+    try {
+      await new Email(user, resetUrl.toString()).sendPasswordReset();
+    } catch (emailErr) {
+      console.error('Password reset email failed:', emailErr);
+      // Don't fail the request - user can try again
+      res.json({
+        status: 'success',
+        message:
+          'If that email exists in our system, you will receive a password reset link.',
+      });
+      return;
+    }
+
+    res.json({
+      status: 'success',
+      message:
+        'If that email exists in our system, you will receive a password reset link.',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { token } = req.query;
+    const { password, passwordConfirm } = req.body;
+
+    if (!token) {
+      return next(new AppError('Reset token is required', 400));
+    }
+
+    if (!password || !passwordConfirm) {
+      return next(
+        new AppError('Please provide password and password confirmation', 400)
+      );
+    }
+
+    if (password !== passwordConfirm) {
+      return next(new AppError('Passwords do not match', 400));
+    }
+
+    // Verify the reset token
+    const decoded = jwt.verify(
+      token as string,
+      process.env.JWT_SECRET || 'secret'
+    ) as JWTPayload;
+
+    // Find user and update password
+    const user = await User.findByIdAndUpdate(
+      decoded.id,
+      { password },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return next(new AppError('Invalid token or user not found', 404));
+    }
+
+    // Generate auth token for automatic login
+    const authToken = signToken((user._id as any).toString());
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Password reset successfully! You are now logged in.',
+      token: authToken,
+      data: {
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+        },
+      },
+    });
+  } catch (error: any) {
+    if (error.name === 'TokenExpiredError') {
+      return next(
+        new AppError(
+          'Password reset token has expired. Please request a new one.',
+          400
+        )
+      );
+    }
+
+    if (error.name === 'JsonWebTokenError') {
+      return next(new AppError('Invalid reset token.', 400));
+    }
+
+    console.error('Password reset error:', error);
+    next(error);
   }
 };
