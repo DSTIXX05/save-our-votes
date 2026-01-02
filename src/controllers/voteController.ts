@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import AppError from '../Util/AppError.js';
-import catchAsync from '../Util/catchAsync.js';
-import { validateToken, castVote } from '../services/voteService.js';
-import { TallyRegistry } from '../domain/voting/tally.js';
-import Election, { IElection } from '../model/electionModel.js';
+import AppError from '../Util/AppError';
+import catchAsync from '../Util/catchAsync';
+import { validateToken, castVote } from '../services/voteService';
+import { TallyRegistry } from '../domain/voting/tally';
+import Election, { IElection } from '../model/electionModel';
 
 // Factory: validate voter token
 const validateVoterTokenFactory = () =>

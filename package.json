@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && node copy-views.js",
-    "dev": "cross-env NODE_ENV=development nodemon --exec \"node --loader ts-node/esm\" ./src/server.ts",
+    "dev": "cross-env NODE_ENV=development nodemon --exec \"tsx\" ./src/server.ts",    
     "start": "node ./dist/server.js",
     "start:prod": "cross-env NODE_ENV=production node ./dist/server.js"
   },
@@ -36,11 +36,12 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.0",
     "@types/nodemailer": "^6.4.14",
-    "@types/swagger-ui-express": "^4.1.6",
     "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "cross-env": "^10.0.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.3"
   }
 }

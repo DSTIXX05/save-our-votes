@@ -1,22 +1,5 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
-
-export interface IOption {
-  _id?: Types.ObjectId;
-  text: string;
-  order: number;
-}
-
-export interface IBallot extends Document {
-  election: Types.ObjectId;
-  title: string;
-  description?: string;
-  type: 'single' | 'multiple';
-  maxSelections: number;
-  options: IOption[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IOption, IBallot } from '../Interfaces/electionInterface';
 
 const optionSchema = new Schema<IOption>(
   {
