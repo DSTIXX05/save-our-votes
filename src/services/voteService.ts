@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import VoterToken, { IVoterToken } from '../model/voterTokenModel.js';
-import Ballot, { IBallot } from '../model/ballotModel.js';
+import Ballot from '../model/ballotModel.js';
+import { IBallot } from '../Interfaces/electionInterface.js';
 import Vote from '../model/voteModel.js';
 import { RuleRegistry } from '../domain/voting/rules.js';
 import { Types } from 'mongoose';

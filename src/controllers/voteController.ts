@@ -3,7 +3,8 @@ import AppError from '../Util/AppError';
 import catchAsync from '../Util/catchAsync';
 import { validateToken, castVote } from '../services/voteService';
 import { TallyRegistry } from '../domain/voting/tally';
-import Election, { IElection } from '../model/electionModel';
+import Election from '../model/electionModel.js';
+import { IElection } from '../Interfaces/electionInterface';
 
 // Factory: validate voter token
 const validateVoterTokenFactory = () =>

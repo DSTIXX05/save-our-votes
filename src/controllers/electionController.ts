@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import Election, { IElection } from '../model/electionModel';
+import Election from '../model/electionModel.js';
+import { IElection } from '../Interfaces/electionInterface';
 import AppError from '../Util/AppError';
 import {
   getAll as listFactory,
