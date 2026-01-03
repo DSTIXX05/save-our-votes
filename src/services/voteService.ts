@@ -36,7 +36,7 @@ export async function validateToken({
   electionId,
 }: ValidateTokenParams): Promise<ValidateTokenResult> {
   const tokenHash = hashToken(token);
-  const vt = await VoterToken.findOne({ election: electionId, tokenHash });
+  const vt = await VoterToken.findOne({ electionId, tokenHash });
   if (!vt) return { ok: false, reason: 'invalid' };
   if (vt.used) return { ok: false, reason: 'used' };
   if (vt.expiresAt && vt.expiresAt < new Date())

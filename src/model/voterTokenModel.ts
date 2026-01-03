@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IVoterToken extends Document {
-  election: Types.ObjectId;
+  electionId: Types.ObjectId;
   tokenHash: string;
   email?: string;
   used: boolean;
@@ -13,7 +13,7 @@ export interface IVoterToken extends Document {
 
 const voterTokenSchema = new Schema<IVoterToken>(
   {
-    election: {
+    electionId: {
       type: Schema.Types.ObjectId,
       ref: 'Election',
       required: true,

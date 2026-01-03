@@ -7,6 +7,7 @@ import AppError from './Util/AppError.js';
 import authRoutes from './Routes/authRoute.js';
 import electionRouter from './Routes/electionRoute.js';
 import voteRouter from './Routes/voteRoute.js';
+import voterRouter from './Routes/voterRoute';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/auth/', authRoutes);
 app.use('/api/elections', electionRouter);
 app.use('/api/vote', voteRouter);
+app.use('/api/voters', voterRouter);
 
 // Global error handling middleware
 app.use(
