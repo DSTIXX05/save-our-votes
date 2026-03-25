@@ -1,7 +1,7 @@
 import fs from 'fs';
 import csc from 'csv-parser';
 import crypto from 'crypto';
-import VoterToken from '../model/voterTokenModel';
+import VoterToken from '../model/voterTokenModel.js';
 
 interface VoterRow {
   email: string;

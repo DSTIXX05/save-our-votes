@@ -1,5 +1,9 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
-import { IOption, IBallot, IElection } from '../Interfaces/electionInterface';
+import {
+  IOption,
+  IBallot,
+  IElection,
+} from '../Interfaces/electionInterface.js';
 
 const optionSchema = new Schema<IOption>(
   {

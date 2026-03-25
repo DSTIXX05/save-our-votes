@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { uploadVotersCSV } from '../controllers/voterController';
+import { uploadVotersCSV } from '../controllers/voterController.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });

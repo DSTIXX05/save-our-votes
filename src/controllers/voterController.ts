@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import catchAsync from '../Util/catchAsync';
-import AppError from '../Util/AppError';
-import { importVotersFromCSV } from '../services/voterImportService';
+import catchAsync from '../Util/catchAsync.js';
+import AppError from '../Util/AppError.js';
+import { importVotersFromCSV } from '../services/voterImportService.js';
 
 export const uploadVotersCSV = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

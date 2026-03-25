@@ -7,7 +7,7 @@ import AppError from './Util/AppError.js';
 import authRoutes from './Routes/authRoute.js';
 import electionRouter from './Routes/electionRoute.js';
 import voteRouter from './Routes/voteRoute.js';
-import voterRouter from './Routes/voterRoute';
+import voterRouter from './Routes/voterRoute.js';
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ app.set('trust proxy', 1);
 
 // Logging based on environment - MUST be before other middleware
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+  app.use(morgan('tiny'));
 } else {
   app.use(morgan('combined'));
 }
@@ -26,10 +26,10 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve Swagger UI - only in development
-if (process.env.NODE_ENV === 'development') {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-}
+// // Serve Swagger UI - only in development
+// if (process.env.NODE_ENV === 'development') {
+//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// }
 
 app.use('/api/auth/', authRoutes);
 app.use('/api/elections', electionRouter);

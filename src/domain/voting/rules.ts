@@ -1,4 +1,4 @@
-import { IBallot } from '../../Interfaces/electionInterface';
+import { IBallot } from '../../Interfaces/electionInterface.js';
 import { Types } from 'mongoose';
 
 export abstract class BallotRule {
