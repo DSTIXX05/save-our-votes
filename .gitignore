@@ -69,3 +69,10 @@ signin-preview.html
 
 # Mongo dumps
 dump/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+Dockerfile.dev
+.docker/
+.docker-compose/
