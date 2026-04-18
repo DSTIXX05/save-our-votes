@@ -1,0 +1,28 @@
+name: Pusd to github
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ENV: development
+      PORT: 3000
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_EXPIRES_IN: 1d
+      JWT_COOKIE_EXPIRES_IN: 1
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      LOGO_URL: ${{ secrets.LOGO_URL }}
+      SUPPORT_EMAIL: ${{ secrets.SUPPORT_EMAIL }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+
+    steps:
+      #Check out code from Github
+      - name: Github Checkout
+        uses: actions/checkout@v4
+
+      - name: Run one line script on Github
+        run: echo "Script runs"

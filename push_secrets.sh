@@ -40,27 +40,6 @@ fi
 
 echo "Starting secret upload to GitHub repository: $REPO"
 
-while IFS= read -r line || [ -n "$line" ]; do
-    line_trimmed="$(echo "$line" | sed -E 's/^[[:space:]]+//')"
-
-    # Skip blank lines and comments.
-    [ -z "$line_trimmed" ] && continue
-    [[ "$line_trimmed" == \#* ]] && continue
-
-    # Parse KEY=VALUE pairs only.
-    if [[ "$line_trimmed" != *"="* ]]; then
-        echo "Skipping invalid line: $line_trimmed"
-        continue
-    fi
-
-    key="${line_trimmed%%=*}"
-    value="${line_trimmed#*=}"
-    key="$(echo "$key" | xargs)"
-
-    [ -z "$key" ] && continue
-
-    echo "Setting secret: $key"
-    printf '%s' "$value" | gh secret set "$key" --repo "$REPO"
-done < "$ENV_FILE"
+gh secret set -f "$ENV_FILE" --repo "$REPO"
 
 echo "All secrets have been pushed successfully to $REPO."
